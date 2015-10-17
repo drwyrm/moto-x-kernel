@@ -2,6 +2,8 @@
 # Makefile for the kernel DVB device drivers.
 #
 
+CFLAGS_KERNEL := -fno-strict-aliasing
+
 dvb-net-$(CONFIG_DVB_NET) := dvb_net.o
 
 dvb-core-objs := dvbdev.o dmxdev.o dvb_demux.o dvb_filter.o 	\

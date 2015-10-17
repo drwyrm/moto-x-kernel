@@ -1,6 +1,9 @@
 #
 # Makefile for the kernel mobicore drivers
 #
+
+CFLAGS_KERNEL := -fno-strict-aliasing
+
 GUD_ROOT_FOLDER := drivers/gud
 # add our modules to kernel.
 obj-$(CONFIG_MOBICORE_API) += mcKernelApi.o
@@ -21,7 +24,7 @@ mcKernelApi-objs := MobiCoreKernelApi/main.o \
 
 # Release mode by default
 ccflags-y := -DNDEBUG -I$(GUD_ROOT_FOLDER)
-ccflags-y += -Wno-declaration-after-statement
+ccflags-y += -Wno-declaration-after-statement -fno-strict-aliasing
 
 #Netlink changed arguments number
 ccflags-y += -DMC_NETLINK_COMPAT_V37

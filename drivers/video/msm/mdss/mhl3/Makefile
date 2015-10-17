@@ -1,3 +1,5 @@
+CFLAGS_si_mhl2_edid_3d.o := -fno-strict-aliasing
+
 ccflags-y += -I$(src)
 
 ccflags-y += -DANSI_COLORS

@@ -1,6 +1,7 @@
 #
 # Makefile for misc devices that really don't fit anywhere else.
 #
+CFLAGS_compat_qseecom.o := -fno-strict-aliasing
 
 obj-$(CONFIG_IBM_ASM)		+= ibmasm/
 obj-$(CONFIG_AD525X_DPOT)	+= ad525x_dpot.o

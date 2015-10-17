@@ -14,6 +14,8 @@
 #
 MODULE_NAME = sec
 
+CFLAGS_KERNEL := -fno-strict-aliasing
+
 obj-$(CONFIG_SEC_DRIVER) += $(MODULE_NAME).o
 
 $(MODULE_NAME)-objs := sec_core.o

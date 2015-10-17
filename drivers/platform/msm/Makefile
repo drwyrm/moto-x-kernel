@@ -2,6 +2,8 @@
 # Makefile for the MSM specific device drivers.
 #
 
+CFLAGS_usb_bam.o := -fno-strict-aliasing
+
 ccflags-y += -Idrivers/misc/
 ccflags-y += -Isecurity/selinux -Isecurity/selinux/include
 

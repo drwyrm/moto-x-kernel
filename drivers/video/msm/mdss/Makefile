@@ -1,3 +1,5 @@
+CFLAGS_mdss_compat_utils.o := -fno-strict-aliasing
+
 ccflags-y += -I$(src)
 
 obj-$(CONFIG_FB_MSM_MDSS_MHL3) += mhl3/
