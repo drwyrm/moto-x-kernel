@@ -248,8 +248,8 @@ GRAPHITE = -fgraphite -fgraphite-identity -floop-interchange -ftree-loop-distrib
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS = -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast -fgcse-las -flto -fomit-frame-pointer -pthread $(GRAPHITE)
-HOSTCXXFLAGS =-DNDEBUG -pipe -Ofast -flto=4 $(GRAPHITE)
+HOSTCFLAGS = -Wall -Wmissing-prototypes -Wstrict-prototypes -O3 -fgcse-las -flto -fomit-frame-pointer -pthread $(GRAPHITE)
+HOSTCXXFLAGS =-DNDEBUG -pipe -O3 -flto=4 $(GRAPHITE)
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
@@ -389,7 +389,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -march=armv8-a+crc -fbranch-target-load-optimize -fsingle-precision-constant \
 	    	   -mtune=cortex-a57.cortex-a53 -ffast-math \
 		   -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr \
-		  -floop-nest-optimize 
+		  -floop-nest-optimize  $(GRAPHITE)
 
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
@@ -592,7 +592,7 @@ all: vmlinux
 #else
 #KBUILD_CFLAGS	+= -O3 $(call cc-disable-warning,maybe-uninitialized,)
 #KBUILD_CFLAGS	+= $(call cc-disable-warning,array-bounds,)
-KBUILD_CFLAGS +=  $(call cc-disable-warning,maybe-uninitialized) -Ofast -g0 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -Wno-array-bounds -fivopts -fno-inline-functions
+KBUILD_CFLAGS +=  $(call cc-disable-warning,maybe-uninitialized) -O3 -g0 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -Wno-array-bounds -fivopts -fno-inline-functions
 #endif
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
