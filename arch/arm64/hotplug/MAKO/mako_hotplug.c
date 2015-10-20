@@ -103,7 +103,7 @@ static inline void cpus_online_work(void)
 {
 	unsigned int cpu;
 
-	for (cpu = 2; cpu < 4; cpu++) {
+	for (cpu = 2; cpu < 6; cpu++) {
 		if (cpu_is_offline(cpu))
 			cpu_up(cpu);
 	}
@@ -115,7 +115,7 @@ static inline void cpus_offline_work(void)
 {
 	unsigned int cpu;
 
-	for (cpu = 3; cpu > 1; cpu--) {
+	for (cpu = 5; cpu > 1; cpu--) {
 		if (cpu_online(cpu))
 			cpu_down(cpu);
 	}
@@ -135,7 +135,7 @@ static inline bool cpus_cpufreq_work(void)
 			return false;
 	}
 
-	for (cpu = 2; cpu < 4; cpu++)
+	for (cpu = 2; cpu < 6; cpu++)
 		current_freq += cpufreq_quick_get(cpu);
 
 	current_freq >>= 1;

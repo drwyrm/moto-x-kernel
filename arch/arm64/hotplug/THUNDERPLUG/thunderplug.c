@@ -22,16 +22,16 @@
 #include <linux/lcd_notify.h>
 #include <linux/cpufreq.h>
 
-static int suspend_cpu_num = 2, resume_cpu_num = 7;
+static int suspend_cpu_num = 2, resume_cpu_num = 5;
 static int endurance_level = 0;
-static int device_cpus = 8;
-static int core_limit = 8;
+static int device_cpus = 6;
+static int core_limit = 6;
 
 static bool isSuspended = false;
 
 struct notifier_block lcd_worker;
 
-#define DEBUG 0
+#define DEBUG 1
 
 #define THUNDERPLUG "thunderplug"
 
@@ -43,12 +43,12 @@ struct notifier_block lcd_worker;
 #define DEF_SAMPLING_MS			(500)
 #define MIN_CPU_UP_TIME			(750)
 
-static int now[8], last_time[8];
+static int now[6], last_time[6];
 
 static int sampling_time = DEF_SAMPLING_MS;
 static int load_threshold = CPU_LOAD_THRESHOLD;
 
-static int tplug_hp_enabled = 1;
+static int tplug_hp_enabled = 0;
 
 static int touch_boost_enabled = 0;
 
@@ -61,7 +61,7 @@ static struct delayed_work tplug_boost;
 static struct workqueue_struct *tplug_resume_wq;
 static struct delayed_work tplug_resume_work;
 
-static unsigned int last_load[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+static unsigned int last_load[6] = {0, 0, 0, 0, 0, 0};
 
 struct cpu_load_data {
 	u64 prev_cpu_idle;
@@ -90,7 +90,7 @@ static inline void offline_cpus(void)
 		default:
 		break;
 	}
-	for(cpu = 7; cpu > (suspend_cpu_num - 1); cpu--) {
+	for(cpu = 5; cpu > (suspend_cpu_num - 1); cpu--) {
 		if (cpu_online(cpu))
 			cpu_down(cpu);
 	}
@@ -110,8 +110,8 @@ static inline void cpus_online_all(void)
 			resume_cpu_num = 1;
 	break;
 	case 0:
-		if(resume_cpu_num < 7)
-			resume_cpu_num = 7;
+		if(resume_cpu_num < 5)
+			resume_cpu_num = 5;
 	break;
 	default:
 	break;
@@ -207,7 +207,7 @@ static ssize_t thunderplug_suspend_cpus_store(struct kobject *kobj, struct kobj_
 {
 	int val;
 	sscanf(buf, "%d", &val);
-	if(val < 1 || val > 8)
+	if(val < 1 || val > 6)
 		pr_info("%s: suspend cpus off-limits\n", THUNDERPLUG);
 	else
 		suspend_cpu_num = val;
@@ -369,15 +369,38 @@ static void __cpuinit tplug_resume_work_fn(struct work_struct *work)
 	thunderplug_resume();
 }
 
+static void print_cpus_all(void)
+{
+	unsigned int cpu;
+
+	for (cpu = 0; cpu < core_limit; cpu++) {
+		pr_info("%s: [%d]: %d\n", THUNDERPLUG, cpu, cpu_is_offline(cpu)?0:1);
+	}
+}
+
 static void __cpuinit tplug_work_fn(struct work_struct *work)
 {
-	int i;
-	unsigned int load[8], avg_load[8];
+	int i,j,nextcpu, nextcpudown;
+	unsigned int load[6], avg_load[6];
+        unsigned int cpuidx[6];
+        unsigned int cpudown[6];
+	cpuidx[0]=0;
+	cpuidx[1]=4;
+	cpuidx[2]=1;
+	cpuidx[3]=2;
+	cpuidx[4]=5;
+	cpuidx[5]=3;
+	cpudown[0]=0;
+	cpudown[1]=3;
+	cpudown[2]=5;
+	cpudown[3]=2;
+	cpudown[4]=1;
+	cpudown[5]=4;
 
 	switch(endurance_level)
 	{
 	case 0:
-		core_limit = 8;
+		core_limit = 6;
 	break;
 	case 1:
 		core_limit = 4;
@@ -386,7 +409,7 @@ static void __cpuinit tplug_work_fn(struct work_struct *work)
 		core_limit = 2;
 	break;
 	default:
-		core_limit = 8;
+		core_limit = 6;
 	break;
 	}
 
@@ -401,26 +424,32 @@ static void __cpuinit tplug_work_fn(struct work_struct *work)
 		last_load[i] = load[i];
 	}
 
-	for(i = 0 ; i < core_limit; i++)
+	for(j = 0 ; j < core_limit-1; j++)
 	{
-	if(cpu_online(i) && avg_load[i] > load_threshold && cpu_is_offline(i+1))
+	i = cpuidx[j];
+	nextcpu=cpuidx[j+1];
+	nextcpudown=cpudown[j+1];
+	if(cpu_online(i) && avg_load[i] > load_threshold && cpu_is_offline(nextcpu))
 	{
 	if(DEBUG)
-		pr_info("%s : bringing back cpu%d\n", THUNDERPLUG,i);
-		if(!((i+1) > 7)) {
-			last_time[i+1] = ktime_to_ms(ktime_get());
-			cpu_up(i+1);
+		pr_info("%s : bringing back cpu%d\n", THUNDERPLUG,nextcpu);
+		if(!((nextcpu) > 5)) {
+			last_time[nextcpu] = ktime_to_ms(ktime_get());
+			cpu_up(nextcpu);
 		}
+			
+		print_cpus_all();	
 	}
-	else if(cpu_online(i) && avg_load[i] < load_threshold && cpu_online(i+1))
+	else if(cpu_online(i) && avg_load[i] < load_threshold && cpu_online(nextcpudown))
 	{
 		if(DEBUG)
-			pr_info("%s : offlining cpu%d\n", THUNDERPLUG,i);
-			if(!(i+1)==0) {
-				now[i+1] = ktime_to_ms(ktime_get());
-				if((now[i+1] - last_time[i+1]) > MIN_CPU_UP_TIME)
-					cpu_down(i+1);
+			pr_info("%s : offlining cpu%d\n", THUNDERPLUG,nextcpudown);
+			if(!(nextcpudown)==0) {
+				now[nextcpudown] = ktime_to_ms(ktime_get());
+				if((now[nextcpudown] - last_time[nextcpudown]) > MIN_CPU_UP_TIME)
+					cpu_down(nextcpudown);
 			}
+			print_cpus_all();	
 		}
 	}
 
