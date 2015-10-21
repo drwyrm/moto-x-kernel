@@ -38,8 +38,8 @@ struct notifier_block lcd_worker;
 #define DRIVER_VERSION  0
 #define DRIVER_SUBVER 1
 
-#define CPU_LOAD_HIGH_THRESHOLD        (40)
-#define CPU_LOAD_LOW_THRESHOLD        (20)
+#define CPU_LOAD_HIGH_THRESHOLD        (65)
+#define CPU_LOAD_LOW_THRESHOLD        (35)
 
 #define DEF_SAMPLING_MS			(500)
 #define MIN_CPU_UP_TIME			(750)
@@ -411,6 +411,7 @@ static void __cpuinit tplug_work_fn(struct work_struct *work)
 
 }
 
+/*
 static int lcd_notifier_callback(struct notifier_block *nb,
                                  unsigned long event, void *data)
 {
@@ -439,6 +440,7 @@ static int lcd_notifier_callback(struct notifier_block *nb,
 
        return 0;
 }
+*/
 
 static ssize_t v4tkplug_ver_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
 {
@@ -514,9 +516,9 @@ static int __init v4tkplug_init(void)
                 kobject_put(v4tkplug_kobj);
         }
 
-		lcd_worker.notifier_call = lcd_notifier_callback;
+		//lcd_worker.notifier_call = lcd_notifier_callback;
 
-        lcd_register_client(&lcd_worker);
+        	//lcd_register_client(&lcd_worker);
 
 		pr_info("%s : registering input boost", V4TKPLUG);
 		ret = input_register_handler(&tplug_input_handler);
