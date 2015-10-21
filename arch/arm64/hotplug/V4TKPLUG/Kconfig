@@ -1,0 +1,5 @@
+config V4TKPLUG_CONTROL
+	bool "Enable plugging down/up of cores using powersuspend"
+	help
+	  This driver uses powersuspend to take down the cpu cores
+	  on a Snapdragon 808 six core device.
