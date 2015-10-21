@@ -64,6 +64,9 @@ static struct delayed_work tplug_resume_work;
 
 static unsigned int last_load[6] = {0, 0, 0, 0, 0, 0};
 
+// Order of CPUs to wake up / shutdownn. 4,5 - big cores
+static unsigned int cpuidx[6] = {0, 4, 1, 2, 5, 3};
+
 struct cpu_load_data {
 	u64 prev_cpu_idle;
 	u64 prev_cpu_wall;
@@ -78,7 +81,7 @@ static DEFINE_PER_CPU(struct cpu_load_data, cpuload);
 
 static inline void offline_cpus(void)
 {
-	unsigned int cpu;
+	unsigned int cpu,j;
 	switch(endurance_level) {
 		case 1:
 			if(suspend_cpu_num > 4)
@@ -91,7 +94,9 @@ static inline void offline_cpus(void)
 		default:
 		break;
 	}
-	for(cpu = 5; cpu > (suspend_cpu_num - 1); cpu--) {
+	for(j = suspend_cpu_num ; j < core_limit; j++)
+	{
+		cpu = cpuidx[j];
 		if (cpu_online(cpu))
 			cpu_down(cpu);
 	}
@@ -100,7 +105,7 @@ static inline void offline_cpus(void)
 
 static inline void cpus_online_all(void)
 {
-	unsigned int cpu;
+	unsigned int cpu,j;
 	switch(endurance_level) {
 	case 1:
 		if(resume_cpu_num > 3 || resume_cpu_num == 1)
@@ -118,7 +123,9 @@ static inline void cpus_online_all(void)
 	break;
 	}
 
-	for (cpu = 1; cpu <= resume_cpu_num; cpu++) {
+	for(j = suspend_cpu_num ; j < core_limit; j++)
+	{
+		cpu = cpuidx[j];
 		if (cpu_is_offline(cpu))
 			cpu_up(cpu);
 	}
@@ -383,21 +390,7 @@ static void __cpuinit tplug_work_fn(struct work_struct *work)
 {
 	int i,j;
 	unsigned int load[6], avg_load[6];
-        unsigned int cpuidx[6];
-        unsigned int cpudown[6];
 	unsigned int avg_cpu_load;
-	cpuidx[0]=0;
-	cpuidx[1]=4;
-	cpuidx[2]=1;
-	cpuidx[3]=2;
-	cpuidx[4]=5;
-	cpuidx[5]=3;
-	cpudown[0]=0;
-	cpudown[1]=3;
-	cpudown[2]=5;
-	cpudown[3]=2;
-	cpudown[4]=1;
-	cpudown[5]=4;
 
 	switch(endurance_level)
 	{

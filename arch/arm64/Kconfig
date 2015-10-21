@@ -677,6 +677,8 @@ source "arch/arm64/hotplug/MSMSLEEPER/Kconfig"
 
 source "arch/arm64/hotplug/THUNDERPLUG/Kconfig"
 
+source "arch/arm64/hotplug/V4TKPLUG/Kconfig"
+
 source "arch/arm64/hotplug/ZENDECISION/Kconfig"
 
 source "arch/arm64/hotplug/AUTOSMP/Kconfig"

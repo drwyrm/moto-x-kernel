@@ -52,6 +52,7 @@ core-$(CONFIG_BRICKED_HOTPLUG)	+= arch/arm64/hotplug/BRICKED/
 core-$(CONFIG_MSM_HOTPLUG)	+= arch/arm64/hotplug/MSMHOTPLUG/
 core-$(CONFIG_MSM_SLEEPER)	+= arch/arm64/hotplug/MSMSLEEPER/
 core-$(CONFIG_THUNDERPLUG_CONTROL)	+= arch/arm64/hotplug/THUNDERPLUG/
+core-$(CONFIG_V4TKPLUG_CONTROL)	+= arch/arm64/hotplug/V4TKPLUG/
 core-$(CONFIG_MAKO_HOTPLUG)	+= arch/arm64/hotplug/MAKO/
 core-$(CONFIG_ZEN_DECISION)	+= arch/arm64/hotplug/ZENDECISION/
 core-$(CONFIG_ASMP)	+= arch/arm64/hotplug/AUTOSMP/
