@@ -79,6 +79,15 @@ struct cpu_load_data {
 
 static DEFINE_PER_CPU(struct cpu_load_data, cpuload);
 
+static void print_cpus_all(void)
+{
+	unsigned int cpu;
+
+	for (cpu = 0; cpu < core_limit; cpu++) {
+		pr_info("%s: [%d]: %d\n", V4TKPLUG, cpu, cpu_is_offline(cpu)?0:1);
+	}
+}
+
 static inline void offline_cpus(void)
 {
 	unsigned int cpu,j;
@@ -324,14 +333,6 @@ static void __cpuinit tplug_resume_work_fn(struct work_struct *work)
 	v4tkplug_resume();
 }
 
-static void print_cpus_all(void)
-{
-	unsigned int cpu;
-
-	for (cpu = 0; cpu < core_limit; cpu++) {
-		pr_info("%s: [%d]: %d\n", V4TKPLUG, cpu, cpu_is_offline(cpu)?0:1);
-	}
-}
 
 static void __cpuinit tplug_work_fn(struct work_struct *work)
 {
