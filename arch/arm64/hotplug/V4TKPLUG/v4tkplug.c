@@ -98,7 +98,7 @@ static inline void offline_cpus(void)
 			cpu_down(cpu);
 	}
 	pr_info("%s: %d cpus were offlined\n", V4TKPLUG, (device_cpus - suspend_cpu_num));
-	print_cpus_all();
+	if(DEBUG) print_cpus_all();
 }
 
 static inline void cpus_online_all(void)
@@ -113,7 +113,7 @@ static inline void cpus_online_all(void)
 	}
 
 	pr_info("%s: all cpus were onlined\n", V4TKPLUG);
-	print_cpus_all();
+	if(DEBUG) print_cpus_all();
 }
 
 static void __ref tplug_boost_work_fn(struct work_struct *work)
@@ -365,7 +365,7 @@ static void __cpuinit tplug_work_fn(struct work_struct *work)
 				pr_info("%s : bringing back cpu%d, load avg: %d\n", V4TKPLUG,i,avg_cpu_load);
 				last_time[i] = ktime_to_ms(ktime_get());
 				cpu_up(i);
-				print_cpus_all();	
+				if(DEBUG) print_cpus_all();	
 				break;
 			}
 		}else{
@@ -389,7 +389,7 @@ static void __cpuinit tplug_work_fn(struct work_struct *work)
 			if(DEBUG)
 				pr_info("%s : offlining cpu%d, load avg: %d\n", V4TKPLUG,i,avg_cpu_load);
 					cpu_down(i);
-					print_cpus_all();	
+					if(DEBUG) print_cpus_all();	
 				}
 				break;
 			}
