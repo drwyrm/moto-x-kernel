@@ -31,7 +31,7 @@ static bool isSuspended = false;
 
 struct notifier_block lcd_worker;
 
-#define DEBUG 1
+#define DEBUG 0
 
 #define V4TKPLUG "v4tkplug"
 
