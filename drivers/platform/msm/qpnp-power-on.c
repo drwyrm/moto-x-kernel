@@ -41,10 +41,6 @@
 #define PMIC8941_V2_REV4	0x02
 #define PON_REV2_VALUE		0x00
 
-#ifdef CONFIG_WAKE_GESTURES
-#include <linux/wake_gestures.h>
-#endif
-
 /* Common PNP defines */
 #define QPNP_PON_REVISION2(base)		(base + 0x01)
 
@@ -1405,12 +1401,6 @@ static int qpnp_pon_config_init(struct qpnp_pon *pon)
 				"Can't register pon key: %d\n", rc);
 			goto free_input_dev;
 		}
-#ifdef CONFIG_WAKE_GESTURES
-		else {
-			 wg_setdev(pon->pon_input);
-			 printk(KERN_INFO "[sweep2wake]: set device %s\n", pon->pon_input->name);
-		}
-#endif
 	}
 
 	for (i = 0; i < pon->num_pon_config; i++) {
