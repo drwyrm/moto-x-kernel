@@ -3,6 +3,7 @@
 #
 
 # Each configuration option enables a list of files.
+CFLAGS_atmel_mxt_ts_mmi.o := -Wno-format
 
 wm97xx-ts-y := wm97xx-core.o
 
